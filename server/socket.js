@@ -1,7 +1,13 @@
 const io=require('socket.io');
 const http=require('http');
 const redis=require('redis');
-const client=redis.createClient();
+const client=redis.createClient({
+    host:"rct.redis.cache.chinacloudapi.cn",
+    port:6380,
+    password:"tIvhKg/PMdcHk8/d8jScxVfN4NrhGMQ7sxY4ear0+3o=",
+    ssl:"True",
+    abortConnect:"False"
+});
 function initSocketServer(server) {
 
     client.on('ready',function () {
@@ -20,7 +26,7 @@ function initSocketServer(server) {
         client.sadd('coll:user:id', `${socket.id}`,function (err) {
             console.log(err);
         });
-        if(!client.exists(ip))
+       console.log(client.exists(ip))
         client.set(ip,socket.id);
         socket.broadcast.emit('user connected',{'id':socket.id})
 
@@ -37,6 +43,12 @@ function initSocketServer(server) {
             console.log(data);
             socket.broadcast.emit('updatedoc',data)
 
+        });
+
+        socket.on("unfreezeDoc",function(data){
+            console.log('unfreezeDoc ')
+            console.log(data);
+            socket.broadcast.emit('unfreezeDoc',data)
         });
     });
 

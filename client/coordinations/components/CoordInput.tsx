@@ -34,7 +34,7 @@ class CoorInput extends React.Component<CoordInputProps,void>
         const coorInput=document.getElementById("coorInput");
         let depth=1;
        if(coorInput.innerText)  depth=new util().getChildOffset(sel);
-        this.props.UpdateDoc({allText:coorInput.innerText, depth:depth, midifiedText:sel.anchorNode.textContent,startOffset:sel.baseOffset,endOffset:sel.focusOffset});
+        this.props.UpdateDoc({allText:coorInput.innerText, depth:depth, midifiedText:sel.anchorNode.textContent,startOffset:sel.baseOffset,endOffset:sel.focusOffset,activeUser:this.props.Users.find(p=>p.isActive).id});
 
     }
 

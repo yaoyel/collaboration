@@ -18,7 +18,6 @@ const scoketMiddleware=createSocketMiddleware(clientSocket);
 const unit=new utils();
 const finalStore= composeEnhancers(
     applyMiddleware(epicMiddleware,scoketMiddleware))(createStore)(rootReducer);
-finalStore.subscribe(()=>console.log(finalStore.getState()));
 rxSoctet(clientSocket);
 finalStore.dispatch(actions.fetchUsers());
 ReactDOM.render(<Provider store={finalStore}>
@@ -27,23 +26,26 @@ ReactDOM.render(<Provider store={finalStore}>
     document.getElementById('app')
 );
 
-
 function rxSoctet(socket) {
  let $userConnect=rxfromIO(socket,"user connected");
     $userConnect.subscribe((data)=>{
         finalStore.dispatch(actions.addUser(data.id))
     });
 
+    let unfreezeDoc=rxfromIO(socket,"unfreezeDoc");
+          unfreezeDoc.subscribe((data)=>{
+          unit.unLockParagraph(data);
+    });
+
+
     let $updateDoc=rxfromIO(socket,"updatedoc");
     $updateDoc.subscribe((data)=>{
      // finalStore.dispatch(actions.updateDoc({midifiedText:data.text,depth:data.depth,updateFromSocket:true}))
-      if(unit.mergeContent(data.depth,data.text))
+       if(!unit.mergeContent(data.depth,data.midifiedText,data.startOffset,data.endOffset))
         {
-            unit.lockParagraph(window.getSelection());
+            unit.lockParagraph(window.getSelection(),null,data.activeUser);
+            alert("有人正在你的光标位置编辑，系统将禁止您编辑该段内容，如果对方5秒内不编辑，你将可以继续编辑");
         }
-        else{
-          finalStore.dispatch(actions.freezeDoc(data.depth));
-      }
     });
 }
 

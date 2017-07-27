@@ -4,6 +4,6 @@
 
 import {combineEpics} from 'redux-observable';
 import {fetchUserEpic} from './UserEpics';
-import {updateDocEpic,freezeDocEpic,unFreezeDocEpic} from  './DocEpics';
+import {updateDocEpic} from  './DocEpics';
 
-export default combineEpics(fetchUserEpic,updateDocEpic,freezeDocEpic,unFreezeDocEpic);
+export default combineEpics(fetchUserEpic,updateDocEpic);

@@ -13,6 +13,7 @@ const initalState:IState= {
 const userReducer= handleActions<User[],User>({
 
     [RECEIVE_USERS]:(state:User[],action:Action<any>): User[]=>{
+
         const receiveUser=[]
             action.payload.allUser.map(p=>{
                 let user=<User>{id:p,nickName:p.substr(0,3),isActive:p==action.payload.activeUser}

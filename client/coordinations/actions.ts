@@ -78,9 +78,8 @@ const updateDoc=createAction<Doc,meta>(
 );
 
 const socketForUpdateDoc=createAction<Doc,meta>(
-    SEND_MESSAGE,
-    (meta:meta)=>(<Doc>{midifiedText:meta.midifiedText,allText:meta.allText,endOffset:meta.endOffset,startOffset:meta.startOffset}),
-    (meta:meta):any=>({messageType:"updatedoc",depth:meta.depth,updateFromSocket:true,endOffset:meta.endOffset,startOffset:meta.startOffset})
+     SEND_MESSAGE,
+     (meta:meta):any=>({messageType:"updatedoc",message:{depth:meta.depth,updateFromSocket:true,endOffset:meta.endOffset,startOffset:meta.startOffset, midifiedText:meta.midifiedText,activeUser:meta.activeUser}})
 );
 
 interface  meta{
@@ -89,7 +88,8 @@ interface  meta{
     depth:number,
     updateFromSocket:boolean,
     endOffset:number,
-    startOffset:number
+    startOffset:number,
+    activeUser:string
 }
 
 export {freezeDoc,unFreezeDoc,meta,sendMessage,fetchUsers,receiveUsers,addLock,addUser,removeLock,removeUser,updateDoc,socketForUpdateDoc}

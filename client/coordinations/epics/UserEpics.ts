@@ -18,7 +18,7 @@ import {delay} from "rxjs/operator/delay";
   const fetchUserEpic=(action$)=>{
     return action$.ofType(actionTypes.FETCH_USERS)
         .mergeMap(()=>
-            ajax.getJSON("http://localhost:3000/api/users").map((res:any)=>(
+            ajax.getJSON("http://rct.chinacloudsites.cn:3000/api/users").map((res:any)=>(
                 receiveUsers(<any>res)
             )))};
 

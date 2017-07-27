@@ -78,7 +78,7 @@ function addProdMiddlewares(app, options) {
     app.use(compression());
     app.use(publicPath,static(outputPath));
     const indexRouter=new Router();
-    indexRouter.get('*', (req, res) => res.sendFile(path.resolve(outputPath, 'index.html')));
+    indexRouter.get('*', (req, res) => {res.sendFile(path.resolve(outputPath, 'index.html'));return;});
 }
 
   function readdirToRouter(apiRouter,child = '') {
@@ -99,4 +99,5 @@ function addProdMiddlewares(app, options) {
              readdirToRouter(file)
         }
     })
+      return;
 };
