@@ -43,8 +43,7 @@ class Coordination extends React.Component<CoordinationProps,void>
                             AddLock={(t:Lock)=>dispatch(addLock(t))}
                             RemoveLock={(id:string)=>dispatch(removeLock(id))}
                             UpdateDoc={(text:any)=>{console.log(text); dispatch(updateDoc(text));
-                            dispatch(socketForUpdateDoc(text))}}
-                           FreezeDOc={()=>dispatch(freezeDoc())}/>
+                            dispatch(socketForUpdateDoc(text))}}   />
                <UserList Users={Users}/>
             </div>
         );

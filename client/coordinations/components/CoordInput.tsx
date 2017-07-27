@@ -11,8 +11,7 @@ interface CoordInputProps{
     RemoveUser:(id:string)=>void,
     AddLock:(lock:Lock)=>any,
     RemoveLock:(id:string)=>void,
-    UpdateDoc:(text:any)=>any,
-    FreezeDOc:()=>any
+    UpdateDoc:(text:any)=>any
 }
 
 class CoorInput extends React.Component<CoordInputProps,void>
@@ -36,7 +35,6 @@ class CoorInput extends React.Component<CoordInputProps,void>
         let depth=1;
        if(coorInput.innerText)  depth=new util().getChildOffset(sel);
         this.props.UpdateDoc({allText:coorInput.innerText, depth:depth, midifiedText:sel.anchorNode.textContent,startOffset:sel.baseOffset,endOffset:sel.focusOffset});
-        this.props.FreezeDOc();
 
     }
 

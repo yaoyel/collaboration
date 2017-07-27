@@ -50,8 +50,27 @@ export  default class utils
         //todo startoffset and end offset
     }
 
+    unLockParagraph()
+    {
+        const node= document.getElementById ("coorInput");
+        var childrens=node.children;
+        for (var i = 0; i < childrens.length; i++) {
+            if((<HTMLElement>childrens[i]).accessKey=="12323")
+            {
+                (<HTMLElement>childrens[i]).style.backgroundColor="white";
+                (<HTMLElement>childrens[i]).contentEditable="true";
+            }
+
+        }
+
+    }
     lockParagraph(sel:Selection,depth:number)
     {
+        if(!sel)
+            sel=window.getSelection();
+        if(!sel.anchorNode || !sel.anchorNode.parentNode) return;
+        if(!depth)
+            depth=this.getChildOffset(sel);
         if(!sel.anchorNode || !sel.anchorNode.parentNode) return;
         const node= document.getElementById ("coorInput");
 

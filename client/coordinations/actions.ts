@@ -31,10 +31,10 @@ function sendMessage(messageType,message) {
     }
 };
 
- function freezeDoc(){
+ function freezeDoc(depth:number){
      return{
          type:FREEZE_DOC,
-         payload:''
+         payload:({depth:depth})
      }
  }
 

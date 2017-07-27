@@ -4,6 +4,7 @@
 export default function (socket) {
 
     return ({dispath,getState})=>next=>action=>{
+
         if(action.Type=="SEND_MESSAGE")
         {
             socket.emit(action.payload.messageType, action.payload.message);

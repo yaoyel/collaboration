@@ -41,6 +41,9 @@ function rxSoctet(socket) {
         {
             unit.lockParagraph(window.getSelection());
         }
+        else{
+          finalStore.dispatch(actions.freezeDoc(data.depth));
+      }
     });
 }
 
