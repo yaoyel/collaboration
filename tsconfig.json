@@ -2,7 +2,7 @@
   "version": "2.2.1",
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es5",
+    "target": "es6",
     "jsx": "react",
     "sourceMap": true,
     "emitDecoratorMetadata": true,

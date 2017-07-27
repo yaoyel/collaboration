@@ -5,9 +5,12 @@ interface UserProps{
     user:userModel
 }
 class User extends React.Component<UserProps,void>{
+    constructor(props,ctx)
+    {
+        super(props,ctx);
+    }
     render(){
-        return(<div style={{width:'20px',height:'20px',float:'left'}}><image src={this.props.user.avatar}/><span>{this.props.user.nickName}</span>></div>);
-
+        return(<div style={{width:'auto',height:'20px',float:'left',color:'red'}}><image src={this.props.user.avatar}/><span>{this.props.user.nickName}//</span></div>);
     }
  }
 

@@ -4,24 +4,27 @@ const Koa = require('koa');
 const Router=require('koa-router');
 const http = require('http');
 const chalk = require('chalk');
+const fs=require('fs');
 var  static=require('koa-static');
 const isProd = process.env.NODE_ENV === 'production';
 const port = process.env.PORT || 3000;
 const session=require('koa-session-minimal');
- const initSocketServer=require('./socket');
+const redis=require('redis').createClient();
+const initSocketServer=require('./socket');
 module.exports = function (options) {
- const app =new Koa();
-
-    app.use(session());
-    const homeRouter=new Router();
+    const app =new Koa();
+    const apiRouter=new Router();
+    readdirToRouter(apiRouter);
+    app.use(apiRouter.routes(), apiRouter.allowedMethods());
+    app.use(session({store:redis}));
     app.use( async ( ctx,next ) => {
         if ( ctx.url === '/' ) {
             ctx.cookies.set(
-                `ip`,
+                `id`,
                 ctx.request.ip
             );
         }
-        await next();
+        return await next();
     })
 
   if (isProd) {
@@ -30,22 +33,8 @@ module.exports = function (options) {
     const webpackConfig = require('../internals/webpack/webpack.dev.config');
     addDevMiddlewares(app, webpackConfig);
   }
-      homeRouter.get("/*", function(ctx) {
-   renderer.render(
-      ctx.request.path,
-      function(err, html) {
-        if(err) {
-            ctx.response.statusCode = 500;
-            ctx.response.contentType = "text; charset=utf8";
-            ctx.response.end(err.message);
-          return;
-        }
-          ctx.response.contentType = "text/html; charset=utf8";
-          ctx.response.end(html);
-      }
-    );
-  });
-    const server =initSocketServer(app);
+    const server=http.Server(app.callback());
+    initSocketServer(server);
 
     server.listen(port, function () {
     console.log(chalk.green('Server started at http://localhost:' + port + '\n'));
@@ -78,6 +67,7 @@ function addDevMiddlewares(app, webpackConfig){
         res.send(file.toString());
       }
     });
+    return;
   });
 }
 
@@ -90,3 +80,23 @@ function addProdMiddlewares(app, options) {
     const indexRouter=new Router();
     indexRouter.get('*', (req, res) => res.sendFile(path.resolve(outputPath, 'index.html')));
 }
+
+  function readdirToRouter(apiRouter,child = '') {
+    let path = `${__dirname}/controller${child ? `/${child}` : ''}`
+
+      fs.readdirSync(path).forEach((file) => {
+        let path = file.split('.')
+        let name = path[0]
+        if (path.length > 1) {
+                let child_path = child ? `${child}/` : ''
+                let route = require(`./controller/${child_path}${name}`);
+                if (name === 'index') {
+                    apiRouter.use(`/api/${child}`, route.routes(), route.allowedMethods())
+                } else {
+                    apiRouter.use(`/api/${child_path}${name}`, route.routes(), route.allowedMethods())
+                }
+        } else {
+             readdirToRouter(file)
+        }
+    })
+};

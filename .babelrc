@@ -1,7 +1,10 @@
 {
   "presets": [
-    [ "latest", { "modules": false} ],
-    "stage-2", 
-    "react"
+    "react",
+    "es2015"
+  ],
+  "plugins": [
+    "add-module-exports",
+    "transform-es2015-modules-umd"
   ]
 }

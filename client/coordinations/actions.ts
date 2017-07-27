@@ -4,22 +4,62 @@ import {assign} from 'lodash';
 import {User,Doc,Lock} from './model';
 
 import {
+    FETCH_USERS,
+    SEND_MESSAGE,
+    RECEIVE_USERS,
     ADD_USER,
     REMOVE_USER,
     UPDATE_DOC,
     ADD_LOCK,
-    REMOVE_LOCK
+    REMOVE_LOCK,
+    FREEZE_DOC,
+    UNFREEZE_DOC
+
 } from './constants/ActionTypes';
+
+ function fetchUsers() {
+    return {
+        type: FETCH_USERS,
+        payload:null
+    };
+}
+
+
+function sendMessage(messageType,message) {
+    return {
+        type: SEND_MESSAGE, payload: ({messageType, message})
+    }
+};
+
+ function freezeDoc(){
+     return{
+         type:FREEZE_DOC,
+         payload:''
+     }
+ }
+
+function unFreezeDoc(){
+    return{
+        type:UNFREEZE_DOC,
+        payload:''
+    }
+}
+
+
+const receiveUsers=createAction<string[],any>(
+    RECEIVE_USERS,
+    (users:any)=><any>users
+);
 
 const addUser=createAction<User,string>(
     ADD_USER,
-    (nickName:string)=>(<User>{nickName:nickName})
+    (id:string)=>(<User>{id:id})
 );
 
 
-const removeUser=createAction<User,number>(
+const removeUser=createAction<User,string>(
     REMOVE_USER,
-    (num:number)=>(<User>{id:num})
+    (id:string)=>(<User>{id:id})
 );
 
 const addLock=createAction<Lock,Lock>(
@@ -27,14 +67,29 @@ const addLock=createAction<Lock,Lock>(
     (lock:Lock)=>lock
 );
 
-const removeLock=createAction<Lock,number>(
+const removeLock=createAction<Lock,string>(
     REMOVE_LOCK,
-     (num:number)=>(<Lock>{id:num})
+     (num:string)=>(<Lock>{id:num})
 );
 
-const updateDoc=createAction<Doc,Doc,string>(
+const updateDoc=createAction<Doc,meta>(
     UPDATE_DOC,
-    (doc:Doc,text:string)=>(<Doc>{text:text})
+    (meta:meta)=>(<Doc>{ midifiedText:meta.midifiedText,depth:meta.depth,allText:meta.allText,updateFromSocket:meta.updateFromSocket}),
 );
 
-export {addLock,addUser,removeLock,removeUser,updateDoc}
+const socketForUpdateDoc=createAction<Doc,meta>(
+    SEND_MESSAGE,
+    (meta:meta)=>(<Doc>{midifiedText:meta.midifiedText,allText:meta.allText,endOffset:meta.endOffset,startOffset:meta.startOffset}),
+    (meta:meta):any=>({messageType:"updatedoc",depth:meta.depth,updateFromSocket:true,endOffset:meta.endOffset,startOffset:meta.startOffset})
+);
+
+interface  meta{
+    allText:string,
+    midifiedText:string,
+    depth:number,
+    updateFromSocket:boolean,
+    endOffset:number,
+    startOffset:number
+}
+
+export {freezeDoc,unFreezeDoc,meta,sendMessage,fetchUsers,receiveUsers,addLock,addUser,removeLock,removeUser,updateDoc,socketForUpdateDoc}

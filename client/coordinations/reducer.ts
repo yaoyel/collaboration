@@ -3,43 +3,50 @@ import {handleActions,Action} from 'redux-actions';
 
 import {User,Doc,Lock,IState} from './model';
 
-import {ADD_LOCK,REMOVE_LOCK,ADD_USER,REMOVE_USER,UPDATE_DOC} from './constants/ActionTypes';
+import {ADD_LOCK, REMOVE_LOCK, ADD_USER, REMOVE_USER, UPDATE_DOC, FETCH_USERS,RECEIVE_USERS} from './constants/ActionTypes';
+import {meta} from "./actions";
 
-const initalState:IState={
-    Users:[<User>{}],
-    Locks:[<Lock>{}],
-    Doc:(<Doc>{router:"/first",text:"测试一下下"})
+const initalState:IState= {
+    Users: []=[], Locks: []=[], Doc: (<Doc>{router: "/first"})
 };
 
 const userReducer= handleActions<User[],User>({
-    [ADD_USER]: (state: IState, action: Action<User>): User[] => {
+
+    [RECEIVE_USERS]:(state:User[],action:Action<any>): User[]=>{
+        const receiveUser=[]
+            action.payload.allUser.map(p=>{
+                let user=<User>{id:p,nickName:p.substr(0,3),isActive:p==action.payload.activeUser}
+               receiveUser.push(user);
+            });
+      return [...receiveUser,...state]
+    },
+    [ADD_USER]: (state: User[], action: Action<User>): User[] => {
         return [(<User>{
-            id:state.Users.reduce((maxId,user)=>Math.max(user.id,maxId),1)+1,
-            nickName:action.payload.nickName
-        }), ...state.Users];
+            id:action.payload.id,
+            nickName:action.payload.id.substr(0,3)
+        }), ...state];
     },
 
-    [REMOVE_USER]: (state: IState, action: Action<User>): User[] => {
-        return state.Users.filter(user => user.id != action.payload.id);
+    [REMOVE_USER]: (state: User[], action: Action<User>): User[] => {
+        return state.filter(user => user.id != action.payload.id);
     }
 },initalState.Users);
 
 const  lockReducer=handleActions<Lock[],Lock>({
 
-        [ADD_LOCK]: (state: IState, action: Action<Lock>): Lock[] => {
-            return [action.payload, ...state.Locks];
+        [ADD_LOCK]: (state: Lock[], action: Action<Lock>): Lock[] => {
+            return [action.payload, ...state];
         },
 
-        [REMOVE_USER]: (state: IState, action: Action<Lock>): Lock[] => {
-            return state.Locks.filter(lock => lock.id != action.payload.id);
+        [REMOVE_USER]: (state: Lock[], action: Action<Lock>): Lock[] => {
+            return state.filter(lock => lock.id != action.payload.id);
         }
 
 },initalState.Locks);
 
 const docReducer=handleActions<Doc,Doc>({
-    [UPDATE_DOC]:(state:IState,action:Action<Doc>):Doc=>{
-         state.Doc.text=action.payload.text;
-         return state.Doc;
+    [UPDATE_DOC]:(state:Doc,action:Action<Doc>):Doc=>{
+         return assign({},state,{midifiedText:action.payload.midifiedText,depth:action.payload.depth});
     }
 },initalState.Doc);
 
