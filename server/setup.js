@@ -4,15 +4,30 @@ const Koa = require('koa');
 const Router=require('koa-router');
 const http = require('http');
 const chalk = require('chalk');
+const cors=require('koa-cors');
 const fs=require('fs');
 var  static=require('koa-static');
 const isProd = process.env.NODE_ENV === 'production';
 const port = process.env.PORT || 3000;
 const session=require('koa-session-minimal');
-const redis=require('redis').createClient();
+const redis=require('redis').createClient({
+    host:"rct.redis.cache.chinacloudapi.cn",
+    port:6379,
+    auth_pass:"tIvhKg/PMdcHk8/d8jScxVfN4NrhGMQ7sxY4ear0+3o=",
+
+});
 const initSocketServer=require('./socket');
 module.exports = function (options) {
     const app =new Koa();
+    app.use(async (ctx, next) => {
+        ctx.set("Access-Control-Allow-Origin", "*");
+        ctx.set("Access-Control-Allow-Methods", "OPTIONS, GET, PUT, POST, DELETE");
+        ctx.set("Access-Control-Allow-Headers", "XMLHttpRequest,x-requested-with, accept, origin, content-type");
+        ctx.set("Content-Type", "application/json;charset=utf-8");
+        ctx.set("Access-Control-Allow-Credentials", true);
+        ctx.set("Access-Control-Max-Age", 300)
+         await next();
+    }) ;
     const apiRouter=new Router();
     readdirToRouter(apiRouter);
     app.use(apiRouter.routes(), apiRouter.allowedMethods());

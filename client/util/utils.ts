@@ -20,21 +20,21 @@ export  default class utils
         return indep;
     }
 
-    mergeContent(depth:number,content:string,startOffset:number,endOffset:number):boolean
+    mergeContent(depth:number,content:string,startOffset:number,endOffset:number,keyCode:any):boolean
     {
-         const conflict= this.conflict(depth,startOffset,endOffset);
+        const conflict= this.conflict(depth,startOffset,endOffset);
         if(conflict) return !conflict;
         const node= document.getElementById ("coorInput");
         const range=document.createRange()
-        if(content.length==0)
-        node.appendChild(document.createElement("DIV"));
+
         range.selectNodeContents(node);
         range.setStart(node,depth-1);
         range.setEnd(node,depth);
+        node.appendChild(document.createElement("DIV"));
 
-        console.log(range)
-        var newElement = range.createContextualFragment(`<div>${content.length==0?'<br/>':content}</div>`)
-        if(content.length!=0)
+        var newElement = range.createContextualFragment(`<div>${(content.length==0 &&　keyCode==13)?'<br/>':content}</div>`)
+
+        if(content.length!=0 ||(content.length==0 && keyCode==8))
         range.extractContents ();
         range.insertNode(newElement);
 
@@ -73,7 +73,6 @@ export  default class utils
         if(!sel.anchorNode || !sel.anchorNode.parentNode) return;
         if(!depth)
             depth=this.getChildOffset(sel);
-        console.log(sel);
         const node= document.getElementById ("coorInput");
 
         if(sel.anchorNode.parentElement.id!="coorInput"){

@@ -28,9 +28,26 @@ class CoorInput extends React.Component<CoordInputProps,void>
         coorInput.addEventListener("DOMCharacterDataModified",(evt:MutationEvent)=>{if(evt.newValue.trim()!=evt.prevValue.trim())UpdateDoc({allText:coorInput.innerHTML,})},false);
 
     }*/
-    handleUpdateDoc(e)
+handleUpdateDocForKeyPress(e)
+{
+    if([8,13].some((s)=>s==e.keyCode))
+    {
+
+        const sel=window.getSelection();
+        if(sel.anchorNode.textContent!="")
+            return;
+        const coorInput=document.getElementById("coorInput");
+        let depth=1;
+        if(coorInput.innerText)  depth=new util().getChildOffset(sel);
+        this.props.UpdateDoc({allText:coorInput.innerText, depth:depth, midifiedText:sel.anchorNode.textContent,startOffset:sel.baseOffset,endOffset:sel.focusOffset,activeUser:this.props.Users.find(p=>p.isActive).id,keyCode:e.keyCode});
+   }
+
+}
+    handleUpdateDocForInput(e)
     {
         const sel=window.getSelection();
+        if(sel.anchorNode.textContent=="")
+        return;
         const coorInput=document.getElementById("coorInput");
         let depth=1;
        if(coorInput.innerText)  depth=new util().getChildOffset(sel);
@@ -39,7 +56,7 @@ class CoorInput extends React.Component<CoordInputProps,void>
     }
 
     render(){
-        return( <div><div id="sib"></div><div style={{border:'5px solid green',width:'1000px',height:'200px'}}  id="coorInput" ref="coorInput"  onInput={this.handleUpdateDoc.bind(this)} contentEditable={true} suppressContentEditableWarning={true}> {this.props.Doc.allText}</div>
+        return( <div><div id="sib"></div><div style={{border:'5px solid green',width:'1000px',height:'200px'}} onKeyUp={this.handleUpdateDocForKeyPress.bind(this)}  id="coorInput" ref="coorInput"  onInput={this.handleUpdateDocForInput.bind(this)} contentEditable={true} suppressContentEditableWarning={true}> {this.props.Doc.allText}</div>
         {
            // this.props.Users.map((value,index)=><UserCom key={index} user={value}/>)
         }

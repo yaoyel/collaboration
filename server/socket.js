@@ -1,13 +1,15 @@
 const io=require('socket.io');
 const http=require('http');
-const redis=require('redis');
+const redis=require('then-redis');
 const client=redis.createClient({
     host:"rct.redis.cache.chinacloudapi.cn",
-    port:6380,
-    password:"tIvhKg/PMdcHk8/d8jScxVfN4NrhGMQ7sxY4ear0+3o=",
-    ssl:"True",
-    abortConnect:"False"
+    port:6379,
+    auth_pass:"tIvhKg/PMdcHk8/d8jScxVfN4NrhGMQ7sxY4ear0+3o="
 });
+client.on("error", function (err) {
+    console.log("error event - " + client.host + ":" + client.port + " - " + err);
+});
+
 function initSocketServer(server) {
 
     client.on('ready',function () {

@@ -41,7 +41,7 @@ function rxSoctet(socket) {
     let $updateDoc=rxfromIO(socket,"updatedoc");
     $updateDoc.subscribe((data)=>{
      // finalStore.dispatch(actions.updateDoc({midifiedText:data.text,depth:data.depth,updateFromSocket:true}))
-       if(!unit.mergeContent(data.depth,data.midifiedText,data.startOffset,data.endOffset))
+       if(!unit.mergeContent(data.depth,data.midifiedText,data.startOffset,data.endOffset,data.keyCode))
         {
             unit.lockParagraph(window.getSelection(),null,data.activeUser);
             alert("有人正在你的光标位置编辑，系统将禁止您编辑该段内容，如果对方5秒内不编辑，你将可以继续编辑");
